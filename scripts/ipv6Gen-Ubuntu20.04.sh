@@ -1,4 +1,5 @@
 #!/bin/sh
+version=0.9.4
 sudo apt-get update && apt-get -y upgrade
 sudo apt-get install gcc make git -y
 
@@ -15,17 +16,16 @@ gen64() {
   echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 install_3proxy() {
-  echo "installing 3proxy"
-  URL="https://github.com/3proxy/3proxy/archive/refs/tags/0.9.4.tar.gz"
-  wget -qO- $URL | bsdtar -xvf-
-  cd 3proxy-0.9.4
+  echo "installing 3proxy sangnm - Script by Sang Nguyen"
+  wget --no-check-certificate -O 3proxy-${version}.tar.gz https://github.com/z3APA3A/3proxy/archive/${version}.tar.gz
+  tar xzf 3proxy-${version}.tar.gz
+  cd 3proxy-${version}
   make -f Makefile.Linux
   mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
   cp src/3proxy /usr/local/etc/3proxy/bin/
   cp ./scripts/rc.d/proxy.sh /etc/init.d/3proxy
   chmod +x /etc/init.d/3proxy
   chkconfig 3proxy on
-  systemctl enable 3proxy
   cd $WORKDIR
 }
 
