@@ -1,5 +1,5 @@
 #!/bin/sh
-version=0.9.4
+version=0.8.13
 sudo apt-get update && apt-get -y upgrade
 sudo apt-get install gcc make git -y
 
@@ -151,3 +151,5 @@ gen_proxy_file_for_user
 # upload_proxy
 
 install_jq && upload_2file
+
+ping6 -c3 google.com &>/dev/null && echo "Connected successfully" || echo "Connection error"
