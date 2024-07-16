@@ -1,5 +1,5 @@
 #!/bin/sh
-version=0.8.13
+version=0.9.3
 sudo apt-get update && apt-get -y upgrade
 sudo apt-get install gcc make git -y
 apt-get install network-manager -y
@@ -136,13 +136,12 @@ chmod +x boot_*.sh /etc/rc.local
 gen_3proxy >/usr/local/etc/3proxy/3proxy.cfg
 
 cat >>/etc/rc.local <<EOF
-sudo systemctl restart NetworkManager.service
+systemctl restart NetworkManager.service
 bash ${WORKDIR}/boot_iptables.sh
 systemctl stop 3proxy > /dev/null && sleep 2 && systemctl start 3proxy > /dev/null
 bash ${WORKDIR}/boot_ifconfig.sh
 ulimit -n 10048
-systemctl daemon-reload
-sudo systemctl restart NetworkManager.service
+systemctl restart NetworkManager.service
 systemctl stop 3proxy > /dev/null && sleep 2 && systemctl start 3proxy > /dev/null
 EOF
 
