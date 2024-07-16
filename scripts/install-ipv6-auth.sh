@@ -12,10 +12,10 @@ gen64() {
   echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 install_3proxy() {
-  echo "installing 3proxy sangnm - Script by Sang Nguyen
+  echo "installing 3proxy"
   URL="https://github.com/3proxy/3proxy/archive/refs/tags/0.9.4.tar.gz"
   wget -qO- $URL | bsdtar -xvf-
-  cd 3proxy-3proxy-0.9.4
+  cd 3proxy-0.9.4
   make -f Makefile.Linux
   mkdir -p /usr/local/etc/3proxy/{bin,logs,stat}
   cp src/3proxy /usr/local/etc/3proxy/bin/
@@ -29,10 +29,8 @@ gen_3proxy() {
   cat <<EOF
 daemon
 maxconn 1000
-nserver 1.1.1.1
+nserver 8.8.8.8
 nserver 8.8.4.4
-nserver 2001:4860:4860::8888
-nserver 2001:4860:4860::8844
 nscache 65536
 timeouts 1 5 30 60 180 1800 15 60
 setgid 65535
@@ -50,14 +48,14 @@ EOF
 }
 
 gen_proxy_file_for_user() {
-  cat >proxy.txt <<EOF
+  cat >proxy-sangnm.txt <<EOF
 $(awk -F "/" '{print $3 ":" $4 ":" $1 ":" $2 }' ${WORKDATA})
 EOF
 }
 
 upload_proxy() {
   local PASS=$(random)
-  zip --password $PASS proxy-sangnm.zip proxy.txt
+  zip --password $PASS proxy-sangnm.zip proxy-sangnm.txt
   URL=$(curl -s --upload-file proxy-sangnm.zip https://transfer.sh/proxy-sangnm.zip)
 
   echo "Proxy is ready! Format IP:PORT:LOGIN:PASS"
@@ -67,14 +65,14 @@ upload_proxy() {
 }
 
 install_jq() {
-  wget -O jq https://github.com/jqlang/jq/releases/download/jq-1.7.1/jq-linux64
+  wget -O jq https://github.com/stedolan/jq/releases/download/jq-1.6/jq-linux64
   chmod +x ./jq
   cp jq /usr/bin
 }
 
 upload_2file() {
   local PASS=$(random)
-  zip --password $PASS proxy-sangnm.zip proxy.txt
+  zip --password $PASS proxy-sangnm.zip proxy-sangnm.txt
   JSON=$(curl -F "file=@proxy-sangnm.zip" https://file.io)
   URL=$(echo "$JSON" | jq --raw-output '.link')
 
@@ -115,10 +113,10 @@ IP6=$(curl -6 -s icanhazip.com | cut -f1-4 -d':')
 
 echo "Internal ip = ${IP4}. Exteranl sub for ip6 = ${IP6}"
 
-echo "Ban muon tao bao nhieu Proxy? (VD Ram1G nen tao 250 proxies - Ram2G thi tao 500proxies)"
+echo "How many proxy do you want to create? Example 500"
 read COUNT
 
-FIRST_PORT=69000
+FIRST_PORT=10000
 LAST_PORT=$(($FIRST_PORT + $COUNT))
 
 gen_data >$WORKDIR/data.txt
